@@ -1,64 +1,83 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.6.10" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-repositories {
-    mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/")
-//    maven("https://maven.enginehub.org/repo/")
-}
-
-@Suppress("GradlePackageUpdate")
-dependencies {
-    compileOnly(kotlin("stdlib"))
-    compileOnly("io.papermc.paper:paper-api:${project.properties["mcVersion"]}-R0.1-SNAPSHOT")
-    compileOnly("io.github.monun:tap-api:${project.properties["tapVersion"]}")
-    compileOnly("io.github.monun:kommand-api:${project.properties["kommandVersion"]}")
-//    compileOnly("io.github.monun:invfx-api:${project.properties["invfxVersion"]}")
-//    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.properties["coroutinesVersion"]}")
-//    compileOnly("io.github.monun:heartbeat-coroutines:${project.properties["hbCoroutinesVersion"]}")
-//    compileOnly("world.komq:parallel-universe-api:${project.properties["parallelUniverseVersion"]}")
-//    compileOnly("com.sk89q.worldedit:worldedit-bukkit:${"worldeditVersion"}")
-}
-
-tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
-    processResources {
-        filesMatching("**/*.yml") {
-            expand(project.properties)
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "com.github.johnrengelman.shadow")
+
+    repositories {
+        maven(Repositories.Paper)
+        maven(Repositories.Bungee)
+    }
+
+    @Suppress("GradlePackageUpdate")
+    dependencies {
+        compileOnly(Dependencies.Paper.API)
+        compileOnly(Dependencies.Bungee.API)
+//        compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.properties["coroutinesVersion"]}")
+
+        implementation(kotlin("stdlib"))
+        implementation(kotlin("reflect"))
+    }
+}
+
+fun Project.preparePublish() {
+    apply(plugin = "org.jetbrains.dokka")
+
+    tasks {
+        create<Jar>("sourcesJar") {
+            archiveClassifier.set("sources")
+            from(sourceSets["main"].allSource)
         }
-        filteringCharset = "UTF-8"
-    }
-    register<Jar>("outputJar") {
-        archiveBaseName.set(project.name)
-        archiveClassifier.set("")
-        archiveVersion.set("")
 
-        from(sourceSets["main"].output)
+        create<Jar>("dokkaJar") {
+            archiveClassifier.set("javadoc")
+            dependsOn("dokkaHtml")
 
-        doLast {
-            copy {
-                from(archiveFile)
-                into("./out")
+            from("$buildDir/dokka/html/") {
+                include("**")
             }
         }
     }
-    register<Jar>("paperJar") {
-        archiveBaseName.set(project.name)
-        archiveClassifier.set("")
-        archiveVersion.set("")
+}
 
-        from(sourceSets["main"].output)
+api.preparePublish()
+core.preparePublish()
 
+tasks {
+    register<DefaultTask>("setupModules") {
         doLast {
-            copy {
-                from(archiveFile)
-                val plugins = File(rootDir, ".server/plugins/")
-                into(if (File(plugins, archiveFileName.get()).exists()) File(plugins, "update") else plugins)
+            val defaultPrefix = "sample"
+            val projectPrefix = rootProject.name
+
+            if (defaultPrefix != projectPrefix) {
+                fun rename(suffix: String) {
+                    val from = "$defaultPrefix-$suffix"
+                    val to = "$projectPrefix-$suffix"
+                    file(from).takeIf { it.exists() }?.renameTo(file(to))
+                }
+
+                rename("api")
+                rename("core")
+                rename("dongle")
+                rename("paper")
+                rename("bungee")
+                rename("publish")
             }
         }
     }
