@@ -6,7 +6,7 @@ plugins {
 }
 
 val githubUser = "qogusdn1017"
-val kwDirFile = File(System.getProperty("user.home").toString())
+val kwDirFile = File("${System.getProperty("user.home")}/.komworld")
 
 val komworldDir = if (!kwDirFile.exists()) {
     kwDirFile.mkdirs()

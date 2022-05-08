@@ -20,7 +20,7 @@ tasks {
     }
 
     shadowJar {
-        archiveBaseName.set(project.name.removeSuffix("-bungee"))
+        archiveBaseName.set(pluginName)
         archiveClassifier.set("")
         archiveVersion.set("")
     }
