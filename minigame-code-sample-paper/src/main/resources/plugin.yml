@@ -6,6 +6,6 @@ libraries:
   - io.github.monun:kommand-core:$kommandVersion
   - io.github.monun:tap-core:$tapVersion
 #  - io.github.monun:invfx:$invfxVersion
-#  - org.jerbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion
+#  - org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion
 #  - io.github.monun:heartbeat-coroutines:$hbCoroutinesVersion
 #  - world.komq:parallel-universe-core:$parallelUniverseVersion
