@@ -1,0 +1,4 @@
+name: $pluginName
+main: $pluginMain
+version: $version
+author: $author
