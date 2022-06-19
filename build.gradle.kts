@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.0"
 }
 
 repositories {
@@ -18,7 +18,6 @@ dependencies {
     compileOnly("io.github.monun:kommand-api:${project.properties["kommandVersion"]}")
 //    compileOnly("io.github.monun:invfx-api:${project.properties["invfxVersion"]}")
 //    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.properties["coroutinesVersion"]}")
-//    compileOnly("io.github.monun:heartbeat-coroutines:${project.properties["hbCoroutinesVersion"]}")
 //    compileOnly("world.komq:parallel-universe-api:${project.properties["parallelUniverseVersion"]}")
 //    compileOnly("com.sk89q.worldedit:worldedit-bukkit:${"worldeditVersion"}")
 }

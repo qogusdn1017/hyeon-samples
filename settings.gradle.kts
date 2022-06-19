@@ -1,1 +1,1 @@
-rootProject.name = "minigame-code-sample"
+rootProject.name = "hyeon-samples"
