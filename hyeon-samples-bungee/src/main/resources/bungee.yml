@@ -1,0 +1,4 @@
+name: $pluginName
+main: $bungeePluginMain
+version: $version
+author: $author
