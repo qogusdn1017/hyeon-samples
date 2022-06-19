@@ -1,4 +1,4 @@
-rootProject.name = "minigame-code-sample"
+rootProject.name = "hyeon-samples"
 
 val api = "${rootProject.name}-api"
 val core = "${rootProject.name}-core"
@@ -11,7 +11,7 @@ val dongle = "${rootProject.name}-dongle"
 val dongleFile = file(dongle)
 if (dongleFile.exists()) {
     include(dongle)
-    // load nms
+
     dongleFile.listFiles()?.filter {
         it.isDirectory && it.name.startsWith("v")
     }?.forEach { file ->

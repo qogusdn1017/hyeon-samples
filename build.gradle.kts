@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.0"
     id("org.jetbrains.dokka") version "1.6.10" apply false
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -58,27 +58,3 @@ fun Project.preparePublish() {
 
 api.preparePublish()
 core.preparePublish()
-
-tasks {
-    register<DefaultTask>("setupModules") {
-        doLast {
-            val defaultPrefix = "sample"
-            val projectPrefix = rootProject.name
-
-            if (defaultPrefix != projectPrefix) {
-                fun rename(suffix: String) {
-                    val from = "$defaultPrefix-$suffix"
-                    val to = "$projectPrefix-$suffix"
-                    file(from).takeIf { it.exists() }?.renameTo(file(to))
-                }
-
-                rename("api")
-                rename("core")
-                rename("dongle")
-                rename("paper")
-                rename("bungee")
-                rename("publish")
-            }
-        }
-    }
-}

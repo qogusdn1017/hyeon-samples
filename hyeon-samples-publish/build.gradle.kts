@@ -6,15 +6,6 @@ plugins {
 }
 
 val githubUser = "qogusdn1017"
-val kwDirFile = File("${System.getProperty("user.home")}/.komworld")
-
-val komworldDir = if (!kwDirFile.exists()) {
-    kwDirFile.mkdirs()
-    kwDirFile
-}
-else kwDirFile
-
-val credentialFile = File(komworldDir, "NexusCredentials.txt")
 
 publishing {
     repositories {
@@ -29,21 +20,15 @@ publishing {
             name = "central"
 
             credentials.runCatching {
-                if (!credentialFile.exists()) credentialFile.createNewFile()
+                val nexusUsername = System.getenv("NEXUS_USERNAME") ?: null
+                val nexusPassword = System.getenv("NEXUS_PASSWORD") ?: null
 
-                val nexusUsername = credentialFile.readLines(StandardCharsets.UTF_8)[0]
-                val nexusPassword = credentialFile.readLines(StandardCharsets.UTF_8)[1]
-
-                if (credentialFile.readLines(StandardCharsets.UTF_8).size == 2 && (nexusUsername.isNotBlank() || nexusPassword.isNotBlank())) {
-                    logger.info("Current Nexus Username: ${credentialFile.readLines(StandardCharsets.UTF_8)[0]}")
-                    logger.info("Current Nexus Password: ${credentialFile.readLines(StandardCharsets.UTF_8)[1]}")
-
+                if ((nexusUsername != null && nexusPassword != null) && (nexusUsername.isNotBlank() && nexusPassword.isNotBlank())) {
                     username = nexusUsername
                     password = nexusPassword
                 }
             }.onFailure {
-                logger.warn("Failed to load nexus credentials, check if credential file contains valid credentials.")
-                logger.warn("Other lines will be ignored.")
+                logger.warn("Failed to load nexus credentials. Please check system environment variables.")
             }
 
             url = uri(
